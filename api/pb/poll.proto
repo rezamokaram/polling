@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option go_package = "polling/api/pb";
+
+message CreatePollRequest {
+    string title = 1 [json_name = "title"];
+    repeated string options = 2 [json_name = "options"];
+    repeated string tags = 3 [json_name = "tags"];
+}

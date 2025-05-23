@@ -1,0 +1,47 @@
+version: "3.8"
+
+volumes:
+  db_data:
+    driver: local
+
+services:
+  postgres:
+    image: postgres:17.2-alpine3.21
+    container_name: postgres
+    hostname: postgres
+    restart: always
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POLLING_POSTGRES_DB}
+      - POSTGRES_USER=${POLLING_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POLLING_POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "${POLLING_POSTGRES_DB}", "-U", "${POLLING_POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  redis: 
+    image: redis:7.4.1-alpine3.20 
+    container_name: redis
+    hostname: redis
+    ports: 
+      - "6379:6379" 
+  
+  polling_app:
+    build:
+      context: .
+      dockerfile: ./build/Dockerfile.polling
+    pull_policy: never
+    image: polling_app
+    container_name: polling_app
+    hostname: polling_app
+    restart: always
+    ports:
+      - "8088:8088"
+    depends_on:
+      postgres:
+        condition: "service_healthy"
