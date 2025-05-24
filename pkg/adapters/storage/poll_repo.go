@@ -35,6 +35,8 @@ func (p *pollRepo) PollList(ctx context.Context, req domain.Filter) ([]domain.Po
 	if req.Tag.Title != "" {
 		query = query.Joins("JOIN tags ON tags.poll_id = polls.id").
 			Where("tags.title = ?", req.Tag.Title).Preload("Tags")
+	} else {
+		query = query.Joins("JOIN tags ON tags.poll_id = polls.id").Preload("Tags")
 	}
 
 	if req.Limit <= 0 {

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option go_package = "polling/api/pb";
+
+message VotePollRequest {
+    uint32 userId = 1 [json_name = "userId"];
+    uint32 pollId = 2 [json_name = "pollId"];
+    uint32 optionIndex = 3 [json_name = "optionIndex"];
+}
+
+// message SkipPollRequest {
+//     uint32 userId = 1 [json_name = "userId"];
+//     uint32 pollId = 2 [json_name = "pollId"];
+// }

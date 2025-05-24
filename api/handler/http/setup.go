@@ -13,13 +13,20 @@ func Run(appContainer app.App, cfg config.POLLING) error {
 
 	api := router.Group("", setUserContext)
 
-	registerAuthAPI(appContainer, cfg, api)
+	pollingAPI(appContainer, cfg, api)
+	voteAPI(appContainer, cfg, api)
 
 	return router.Listen(fmt.Sprintf(":%d", cfg.Port))
 }
 
-func registerAuthAPI(appContainer app.App, cfg config.POLLING, router fiber.Router) {
+func pollingAPI(appContainer app.App, cfg config.POLLING, router fiber.Router) {
 	pollingSvcGetter := pollingServiceGetter(appContainer, cfg)
 	router.Post("/polls", setTransaction(appContainer.DB()), CreatePoll(pollingSvcGetter))
 	router.Get("/polls", setTransaction(appContainer.DB()), PollList(pollingSvcGetter))
+}
+
+func voteAPI(appContainer app.App, cfg config.POLLING, router fiber.Router) {
+	voteSvcGetter := voteServiceGetter(appContainer, cfg)
+	router.Post("/polls/:poll/vote", setTransaction(appContainer.DB()), VotePoll(voteSvcGetter))
+	router.Post("/polls/:poll/skip", setTransaction(appContainer.DB()), SkipPoll(voteSvcGetter))
 }

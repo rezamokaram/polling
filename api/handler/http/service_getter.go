@@ -14,3 +14,9 @@ func pollingServiceGetter(appContainer app.App, cfg config.POLLING) ServiceGette
 		return service.NewPollingService(appContainer.PollingService(ctx))
 	}
 }
+
+func voteServiceGetter(appContainer app.App, cfg config.POLLING) ServiceGetter[*service.VoteService] {
+	return func(ctx context.Context) *service.VoteService {
+		return service.NewVoteService(appContainer.VoteService(ctx))
+	}
+}

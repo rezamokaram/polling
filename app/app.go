@@ -6,6 +6,8 @@ import (
 	"polling/config"
 	"polling/internal/polling"
 	pollingPort "polling/internal/polling/port"
+	"polling/internal/vote"
+	votePort "polling/internal/vote/port"
 	redisAdapter "polling/pkg/adapters/cache"
 	"polling/pkg/adapters/storage"
 	"polling/pkg/adapters/storage/types"
@@ -21,6 +23,7 @@ type app struct {
 	redisProvider  cache.Provider
 	cfg            config.PollingConfig
 	pollingService pollingPort.Service
+	voteService    votePort.Service
 }
 
 func NewApp(cfg config.PollingConfig) (App, error) {
@@ -63,6 +66,7 @@ func (a *app) setDB() error {
 		&types.Poll{},
 		&types.Option{},
 		&types.Tag{},
+		&types.Vote{},
 	); err != nil {
 		return err
 	}
@@ -79,6 +83,10 @@ func (a *app) pollingServiceWithDB(db *gorm.DB) pollingPort.Service {
 	return polling.NewService(storage.NewPollRepo(db))
 }
 
+func (a *app) voteServiceWithDB(db *gorm.DB) votePort.Service {
+	return vote.NewService(storage.NewVoteRepo(db))
+}
+
 // IMPL
 
 func (a *app) PollingService(ctx context.Context) pollingPort.Service {
@@ -91,6 +99,18 @@ func (a *app) PollingService(ctx context.Context) pollingPort.Service {
 	}
 
 	return a.pollingServiceWithDB(db)
+}
+
+func (a *app) VoteService(ctx context.Context) votePort.Service {
+	db := appCtx.GetDB(ctx)
+	if db == nil {
+		if a.pollingService == nil {
+			a.pollingService = a.pollingServiceWithDB(a.db)
+		}
+		return a.voteService
+	}
+
+	return a.voteServiceWithDB(db)
 }
 
 func (a *app) DB() *gorm.DB {

@@ -18,7 +18,7 @@ func main() {
 
 	appContainer, err := app.NewApp(cfg)
 	if err != nil {
-		log.Fatalf("can not create presence app: %v", err)
+		log.Fatalf("can not create polling app: %v", err)
 	}
 
 	log.Fatal(http.Run(appContainer, cfg.Polling))

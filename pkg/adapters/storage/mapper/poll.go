@@ -8,7 +8,7 @@ import (
 func PollDomain2Storage(poll domain.Poll) types.Poll {
 	options := make([]types.Option, len(poll.Options))
 	for i, opt := range poll.Options {
-		options[i] = DomainOption2Storage(opt)
+		options[i] = DomainOption2Storage(opt, uint(i+1))
 	}
 
 	tags := make([]types.Tag, len(poll.Tags))
