@@ -27,3 +27,11 @@ func (s *service) CreatePoll(ctx context.Context, req domain.Poll) error {
 	}
 	return nil
 }
+
+func (s *service) PollList(ctx context.Context, req domain.Filter) ([]domain.Poll, error) {
+	list, err := s.repo.PollList(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return list, nil
+}

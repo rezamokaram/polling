@@ -7,3 +7,24 @@ message CreatePollRequest {
     repeated string options = 2 [json_name = "options"];
     repeated string tags = 3 [json_name = "tags"];
 }
+
+message PollListRequest {
+    uint32 userId = 1 [json_name = "title"];
+    string tag = 2 [json_name = "tag"];
+    uint32 page = 3 [json_name = "page"];
+    uint32 limit = 4 [json_name = "limit"];
+}
+
+message PollListResponse {
+    repeated Poll polls = 1 [json_name = "polls"];
+}
+
+message Poll {
+    string id = 1 [json_name = "id"];
+    string title = 2 [json_name = "title"];
+    repeated string options = 3 [json_name = "options"];
+    repeated string tags = 4 [json_name = "tags"];
+    int64 createdAt = 5 [json_name = "createdAt"];
+    int64 updatedAt = 6 [json_name = "updatedAt"];
+}
+
