@@ -21,3 +21,4 @@ Some aspects like advanced error handling, full test coverage, and deployment op
 
 I also designed a high-scale system architecture to efficiently handle a large volume of write operations. You can find the high-level architecture diagram below.
 
+![architecture](https://raw.githubusercontent.com/rezamokaram/polling/refs/heads/main/docs/ideal-system-design.png)
