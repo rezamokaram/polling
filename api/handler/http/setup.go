@@ -15,6 +15,7 @@ func Run(appContainer app.App, cfg config.POLLING) error {
 
 	pollingAPI(appContainer, cfg, api)
 	voteAPI(appContainer, cfg, api)
+	statsAPI(appContainer, cfg, api)
 
 	return router.Listen(fmt.Sprintf(":%d", cfg.Port))
 }
@@ -29,4 +30,9 @@ func voteAPI(appContainer app.App, cfg config.POLLING, router fiber.Router) {
 	voteSvcGetter := voteServiceGetter(appContainer, cfg)
 	router.Post("/polls/:poll/vote", setTransaction(appContainer.DB()), VotePoll(voteSvcGetter))
 	router.Post("/polls/:poll/skip", setTransaction(appContainer.DB()), SkipPoll(voteSvcGetter))
+}
+
+func statsAPI(appContainer app.App, cfg config.POLLING, router fiber.Router) {
+	statsSvcGetter := statsServiceGetter(appContainer, cfg)
+	router.Get("/polls/:poll/stats", setTransaction(appContainer.DB()), PollStats(statsSvcGetter))
 }

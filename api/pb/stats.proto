@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "polling/api/pb";
+
+message PollStatsResponse {
+    uint32 pollId = 1 [json_name = "pollId"];
+    repeated VoteStats votes = 2 [json_name = "votes"];
+}
+
+message VoteStats {
+    string option = 1 [json_name = "option"];
+    uint32 count = 2 [json_name = "count"];
+}
+
+message PollStatsRequest {
+    uint32 pollId = 1 [json_name = "pollId"];
+}

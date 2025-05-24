@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"polling/config"
+	statsPort "polling/internal/aggregates/stats"
 	"polling/internal/polling"
 	pollingPort "polling/internal/polling/port"
 	"polling/internal/vote"
@@ -24,6 +25,7 @@ type app struct {
 	cfg            config.PollingConfig
 	pollingService pollingPort.Service
 	voteService    votePort.Service
+	statsService   statsPort.AggregatePollStatsService
 }
 
 func NewApp(cfg config.PollingConfig) (App, error) {
@@ -87,6 +89,10 @@ func (a *app) voteServiceWithDB(db *gorm.DB) votePort.Service {
 	return vote.NewService(storage.NewVoteRepo(db))
 }
 
+func (a *app) statsServiceWithDB(db *gorm.DB) statsPort.AggregatePollStatsService {
+	return statsPort.NewService(storage.NewPollStatsRepo(db))
+}
+
 // IMPL
 
 func (a *app) PollingService(ctx context.Context) pollingPort.Service {
@@ -111,6 +117,18 @@ func (a *app) VoteService(ctx context.Context) votePort.Service {
 	}
 
 	return a.voteServiceWithDB(db)
+}
+
+func (a *app) StatsService(ctx context.Context) statsPort.AggregatePollStatsService {
+	db := appCtx.GetDB(ctx)
+	if db == nil {
+		if a.pollingService == nil {
+			a.pollingService = a.pollingServiceWithDB(a.db)
+		}
+		return a.statsService
+	}
+
+	return a.statsServiceWithDB(db)
 }
 
 func (a *app) DB() *gorm.DB {

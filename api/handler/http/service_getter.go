@@ -20,3 +20,9 @@ func voteServiceGetter(appContainer app.App, cfg config.POLLING) ServiceGetter[*
 		return service.NewVoteService(appContainer.VoteService(ctx))
 	}
 }
+
+func statsServiceGetter(appContainer app.App, cfg config.POLLING) ServiceGetter[*service.StatsService] {
+	return func(ctx context.Context) *service.StatsService {
+		return service.NewStatsService(appContainer.StatsService(ctx))
+	}
+}
